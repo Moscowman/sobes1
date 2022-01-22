@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">sobes_lesson1</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="select_location">Select location</string>
 </resources>

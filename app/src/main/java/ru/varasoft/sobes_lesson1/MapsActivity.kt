@@ -19,6 +19,14 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import ru.varasoft.sobes_lesson1.databinding.ActivityMapsBinding
+import android.util.Log
+
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener
+
+import androidx.lifecycle.Transformations.map
+
+
+
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -31,6 +39,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    private var markerCount = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,7 +48,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
 
         val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+            .findFragmentById(R.id.map) as MyMapFragment
         mapFragment.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -75,10 +85,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
-                location?.let { location ->
-                    val latlng = LatLng(location.latitude, location.longitude)
+                location?.let {
+                    val latlng = LatLng(it.latitude, it.longitude)
                     mMap.addMarker(MarkerOptions().position(latlng).title("You are here"))
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng))
+                    mMap.setOnMapClickListener({ point ->
+                        mMap.addMarker(MarkerOptions().position(point).title("Marker " + markerCount++))
+                    })
                 }
             }
     }
