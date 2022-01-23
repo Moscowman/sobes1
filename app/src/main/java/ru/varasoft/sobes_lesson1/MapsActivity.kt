@@ -4,29 +4,19 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Looper
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import ru.varasoft.sobes_lesson1.databinding.ActivityMapsBinding
-import android.util.Log
-
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener
-
-import androidx.lifecycle.Transformations.map
-
-
-
+import java.util.ArrayList
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -40,6 +30,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var markerCount = 1
+
+    private val mMarkerArray: ArrayList<Marker> = ArrayList<Marker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,10 +79,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     val latlng = LatLng(it.latitude, it.longitude)
-                    mMap.addMarker(MarkerOptions().position(latlng).title("You are here"))
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng))
                     mMap.setOnMapClickListener({ point ->
-                        mMap.addMarker(MarkerOptions().position(point).title("Marker " + markerCount++))
+                        val marker = mMap.addMarker(MarkerOptions().position(point).title("Marker " + markerCount++))
+                        if (marker != null) {
+                            mMarkerArray.add(marker)
+                        };
                     })
                 }
             }
